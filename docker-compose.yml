@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  ui:
+    image: akhileshsingh170194/spring-boot-startup-analyzer:latest
+    container_name: spring-boot-startup-analyzer
+    ports:
+      - "${UI_PORT:-8000}:80" # Serve UI on http://localhost:${UI_PORT:-8000}
+    restart: unless-stopped
+    # This service pulls a prebuilt static UI image from Docker Hub.
+    # Optional: set a different host port without editing this file
+    # Example (PowerShell): $env:UI_PORT=9000; docker compose up -d
+    # Example (bash): UI_PORT=9000 docker compose up -d
+    # If you use the Analyze (URL) option, ensure your Spring Boot app allows CORS from
+    #   http://localhost:${UI_PORT:-8000} (or wherever you host this UI).

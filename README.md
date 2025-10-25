@@ -23,6 +23,30 @@ For the complete user guide, configuration, and troubleshooting, see the User Ma
 
 Tip: To avoid CORS in some setups when using the URL option, serve the files via a simple local web server (e.g., `python -m http.server 8000`).
 
+## Run with Docker Compose
+
+The UI is a static site. You can serve it locally with Docker in seconds.
+
+Prerequisites:
+- Docker Desktop (includes Docker Compose)
+
+Steps:
+1. From the repository root, run:
+   - `docker compose up -d`
+2. Open http://localhost:8000 in your browser (default).
+3. When finished, stop and remove the container:
+   - `docker compose down`
+
+Customize the host port (optional):
+- The container exposes port 80 (nginx default). The compose file publishes it to your host port using an environment variable `UI_PORT` with a default of `8000`.
+- Examples:
+  - PowerShell: `$env:UI_PORT=9000; docker compose up -d` then open http://localhost:9000
+  - Bash: `UI_PORT=9000 docker compose up -d` then open http://localhost:9000
+
+Notes:
+- The compose file pulls and runs the prebuilt image `akhileshsingh170194/spring-boot-startup-analyzer:1.0.0`.
+- If you use the Analyze (URL) option, ensure your Spring Boot app allows CORS from `http://localhost:${UI_PORT:-8000}` (see docs/USER_MANUAL.md for examples).
+
 ## Features
 
 - Visual timeline with expand/collapse and progress bars
@@ -89,3 +113,78 @@ MIT License — see LICENSE.
 
 
 
+
+
+## Run with Docker (prebuilt image)
+
+If you just want to run the UI using the published public image (no cloning or building required):
+
+- Start the container on port 8001 as requested:
+
+```
+docker run -d -p 8001:80 --name spring-boot-startup-analyzer \
+  akhileshsingh170194/spring-boot-startup-analyzer:1.0.0
+```
+
+- Open the UI at: http://localhost:8001
+- Stop and remove the container when done:
+
+```
+docker stop spring-boot-startup-analyzer && docker rm spring-boot-startup-analyzer
+```
+
+Notes:
+- The container exposes port 80; map to any host port as needed (e.g., -p 9000:80 → http://localhost:9000).
+- If you use the Analyze (URL) option, ensure your Spring Boot app allows CORS from the host where this UI runs (e.g., http://localhost:8001).
+
+## Build and Publish a Docker Image
+
+You can package the static UI into a small Docker image and push it to a public registry (e.g., Docker Hub).
+
+Prerequisites:
+- A Docker Hub account (or any container registry account)
+- Docker Desktop / CLI installed and logged in (`docker login`)
+
+Build the image (replace YOUR_DOCKERHUB_USERNAME as needed):
+
+```
+# From the repository root
+docker build -t YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:latest .
+```
+
+Test locally:
+```
+docker run --rm -p 8000:80 YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:latest
+# Open http://localhost:8000
+```
+
+Version/tag recommendations:
+- Use semantic tags when you make visible changes (e.g., `v1.0.0`, `v1.0.1`).
+- Keep `:latest` updated to the newest stable release.
+
+Push to Docker Hub:
+```
+# If not already authenticated
+docker login
+
+# Push your tag(s)
+docker push YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:latest
+# Optionally push a versioned tag
+# docker tag YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:latest YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:v1.0.0
+# docker push YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:v1.0.0
+```
+
+Notes:
+- This is a static app served by nginx; no server-side code runs. The container simply serves the HTML/CSS/JS.
+- When using the Analyze (URL) option, ensure your Spring Boot app allows CORS from the host where this container is running (e.g., `http://localhost:8000` or your public domain). See docs/USER_MANUAL.md for configuration examples.
+- To host publicly, push to a public repository on Docker Hub and reference the image in your deployment platform (Kubernetes, ECS, ACI, Fly.io, etc.).
+
+Alternative: GitHub Container Registry (GHCR):
+```
+# Login (uses GitHub token with `write:packages` scope)
+docker login ghcr.io -u YOUR_GITHUB_USERNAME -p YOUR_GITHUB_TOKEN
+
+# Tag and push
+docker tag YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:latest ghcr.io/YOUR_GITHUB_USERNAME/startup-analyzer-ui:latest
+docker push ghcr.io/YOUR_GITHUB_USERNAME/startup-analyzer-ui:latest
+```

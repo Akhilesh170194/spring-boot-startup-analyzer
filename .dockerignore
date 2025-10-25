@@ -1,0 +1,44 @@
+# Docker build context ignore for a static web app
+# Keep the image small and builds fast by excluding non-runtime files
+
+# VCS
+.git
+.gitignore
+
+# Node and build outputs (not used now, future-proof)
+node_modules
+bower_components
+dist
+build
+out
+.cache
+.tmp
+
+# IDE/editor
+.idea
+.vscode
+*.iml
+.history
+.fleet
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Tests and samples (none currently)
+**/__tests__
+**/*.spec.*
+**/*.test.*
+
+# Project docs and meta (not needed at runtime)
+docs
+WARP.md
+
+# Docker-related
+Dockerfile
+.dockerignore
+
+docker-compose.yml
