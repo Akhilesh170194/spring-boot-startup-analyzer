@@ -1,0 +1,41 @@
+Spring Boot Startup Analyzer
+Copyright (c) 2025 AOne Consultancy
+
+This project and all its contents are protected by copyright law.
+
+The software is licensed under the MIT License (see LICENSE file).
+
+================================================================================
+THIRD-PARTY ACKNOWLEDGMENTS
+================================================================================
+
+This software may include or reference the following third-party components:
+
+1. Spring Boot Framework
+   - Copyright (c) Pivotal Software, Inc.
+   - Licensed under the Apache License 2.0
+   - https://spring.io/projects/spring-boot
+
+2. Spring Boot Actuator
+   - Copyright (c) Pivotal Software, Inc.
+   - Licensed under the Apache License 2.0
+   - Part of Spring Boot project
+
+3. Modern Web Standards
+   - HTML5, CSS3, JavaScript ES6+
+   - Public standards from W3C and ECMA International
+
+================================================================================
+ATTRIBUTION
+================================================================================
+
+Built for Spring Boot developers
+Created: 2025
+Maintained by: AOne Consultancy
+
+For questions, contributions, or licensing inquiries, please refer to:
+- Project repository
+- LICENSE file
+- README.md
+
+================================================================================

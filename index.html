@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Boot Startup Analyzer</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container flex-between-center">
+            <h1>
+                <div class="logo">⚡</div>
+                Spring Boot Startup Analyzer
+            </h1>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="input-group">
+                <input type="text" 
+                       id="endpointUrl" 
+                       placeholder="http://localhost:8080/actuator/startup" 
+                       value="http://localhost:7811/api/actuator/startup">
+                <button class="btn btn-danger" onclick="analyzeStartup()" title="Fetch from URL">Analyze</button>
+                <input type="file" id="jsonFile" accept="application/json,.json" title="Choose /actuator/startup JSON file (optional)">
+                <label class="inline-checkbox">
+                    <input type="checkbox" id="expandAll"> Expand All
+                </label>
+                <button class="btn btn-secondary" onclick="clearAll()" title="Reset URL, editor, file input, and results">Clear</button>
+            </div>
+            <div id="pasteContainer" style="width: 100%;">
+                <textarea id="pasteJson" class="paste-area" placeholder="Paste the JSON content from /actuator/startup here, or choose a file above to preview/edit it"></textarea>
+                <div style="display:flex; gap:10px; margin-top: 8px;">
+                    <button class="btn btn-danger" onclick="parsePastedJson()" title="Parse JSON from the editor">Load JSON</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div id="summarySection" class="hidden">
+            <div class="summary">
+                <h2>
+                    <span>Startup Summary</span>
+                    <span class="summary-note">
+                        Total Duration: <span id="totalDuration" class="highlight">0s</span>
+                    </span>
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-card active" onclick="filterByCard('all')" data-filter="all">
+                        <div class="stat-label">Total Steps</div>
+                        <div class="stat-value" id="totalSteps">0</div>
+                    </div>
+                    <div class="stat-card warning" onclick="filterByCard('slow')" data-filter="slow">
+                        <div class="stat-label">Slow Steps</div>
+                        <div class="stat-value" id="slowSteps">0</div>
+                    </div>
+                    <div class="stat-card danger" onclick="filterByCard('critical')" data-filter="critical">
+                        <div class="stat-label">Critical Issues</div>
+                        <div class="stat-value" id="criticalIssues">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Section -->
+        <div id="timelineSection" class="hidden">
+            <div class="timeline">
+                <h2>
+                    <span>Startup Timeline</span>
+                </h2>
+                <div id="timelineContent"></div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+            <h3>No Data Available</h3>
+            <p>Enter your /actuator/startup endpoint URL and click Analyze to view detailed startup metrics</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="loading hidden">
+            <h3>Analyzing...</h3>
+            <p>Fetching startup data from endpoint</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+</html>
