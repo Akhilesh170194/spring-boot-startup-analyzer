@@ -1,0 +1,105 @@
+# Git ignore for Spring Boot Startup Analyzer (static web app)
+# Covers OS cruft, editors/IDEs, logs, temp files, node-based tooling, and common build outputs
+
+# --------------------------------------------------------
+# OS files
+# --------------------------------------------------------
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Icon?
+Desktop.ini
+$RECYCLE.BIN/
+
+# --------------------------------------------------------
+# Editors / IDEs
+# --------------------------------------------------------
+.idea/
+*.iml
+.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+.history/
+.fleet/
+
+# --------------------------------------------------------
+# Logs and runtime
+# --------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.pid
+*.seed
+*.pid.lock
+
+# --------------------------------------------------------
+# Dependency directories (future-proof if Node tooling is added)
+# --------------------------------------------------------
+node_modules/
+bower_components/
+
+# --------------------------------------------------------
+# Build / output / coverage
+# --------------------------------------------------------
+dist/
+build/
+out/
+coverage/
+.nyc_output/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.sass-cache/
+.tmp/
+tmp/
+temp/
+
+# Java/Maven/Gradle (not used here, but harmless if present)
+target/
+.gradle/
+.classpath
+.project
+.settings/
+
+# Static hosting/platform configs (local)
+.vercel/
+.netlify/
+
+# --------------------------------------------------------
+# Environment files
+# --------------------------------------------------------
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --------------------------------------------------------
+# Archives / backups
+# --------------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.bz2
+*.7z
+*.rar
+
+# Misc
+*.bak
+*.tmp
+*.orig
