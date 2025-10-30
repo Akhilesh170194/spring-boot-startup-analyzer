@@ -2,96 +2,210 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Spring Boot Startup Analyzer</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <div class="container flex-between-center">
-            <h1>
-                <div class="logo">⚡</div>
-                Spring Boot Startup Analyzer
-            </h1>
-            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+<!-- Header -->
+<div class="header">
+    <div class="container flex-between-center">
+        <h1>
+            <div class="logo">⚡</div>
+            Spring Boot Startup Analyzer
+        </h1>
+        <div class="header-actions">
+            <button aria-label="Toggle theme" class="theme-toggle" id="themeToggleBtn" title="Toggle theme">🌙</button>
+            <div class="menu-wrapper">
+                <button aria-label="Open menu" class="menu-toggle" id="headerMenuBtn" title="Menu">☰</button>
+                <div aria-labelledby="headerMenuBtn" class="header-menu hidden" id="headerMenu" role="menu">
+                    <button class="menu-item" id="menuLlmSettings" role="menuitem">LLM Settings</button>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Input Section -->
-        <div class="input-section">
-            <div class="input-group">
-                <input type="text" 
-                       id="endpointUrl" 
-                       placeholder="http://localhost:8080/actuator/startup" 
-                       value="http://localhost:8080/actuator/startup">
-                <button class="btn btn-danger" onclick="analyzeStartup()" title="Fetch from URL">Analyze</button>
-                <input type="file" id="jsonFile" accept="application/json,.json" title="Choose /actuator/startup JSON file (optional)">
-                <label class="inline-checkbox">
-                    <input type="checkbox" id="expandAll"> Expand All
+<!-- Main Container -->
+<div class="container">
+    <!-- Input Section -->
+    <div class="input-section">
+        <div class="input-group">
+            <input id="endpointUrl"
+                   placeholder="http://localhost:8080/actuator/startup"
+                   type="text"
+                   value="http://localhost:8080/actuator/startup">
+            <button class="btn btn-danger" id="analyzeBtn" title="Load JSON from the URL into the editor">Load from URL</button>
+            <input accept="application/json,.json" id="jsonFile" title="Choose /actuator/startup JSON file (optional)"
+                   type="file">
+            <label class="inline-checkbox">
+                <input id="expandAll" type="checkbox"> Expand All
+            </label>
+            <button class="btn btn-secondary" id="clearBtn" title="Reset URL, editor, file input, and results">Clear
+            </button>
+        </div>
+        <div id="pasteContainer" style="width: 100%;">
+            <textarea class="paste-area" id="pasteJson"
+                      placeholder="Paste the JSON content from /actuator/startup here, or choose a file above to preview/edit it"></textarea>
+            <div style="display:flex; gap:10px; margin-top: 8px; align-items: center;">
+                <button class="btn btn-danger" id="loadJsonBtn" title="Summarize steps from the JSON in the editor">Summarize JSON</button>
+                <button class="btn btn-primary" id="analyzeWithLlmBtn"
+                        title="Use a free LLM to analyze the loaded JSON">Analyze with LLM
+                </button>
+                <label class="inline-checkbox" title="Send full JSON (may hit rate/token limits)">
+                    <input id="llmFullJsonToggle" type="checkbox"> Send full JSON
                 </label>
-                <button class="btn btn-secondary" onclick="clearAll()" title="Reset URL, editor, file input, and results">Clear</button>
             </div>
-            <div id="pasteContainer" style="width: 100%;">
-                <textarea id="pasteJson" class="paste-area" placeholder="Paste the JSON content from /actuator/startup here, or choose a file above to preview/edit it"></textarea>
-                <div style="display:flex; gap:10px; margin-top: 8px;">
-                    <button class="btn btn-danger" onclick="parsePastedJson()" title="Parse JSON from the editor">Load JSON</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Summary Section -->
-        <div id="summarySection" class="hidden">
-            <div class="summary">
-                <h2>
-                    <span>Startup Summary</span>
-                    <span class="summary-note">
-                        Total Duration: <span id="totalDuration" class="highlight">0s</span>
-                    </span>
-                </h2>
-                <div class="stats-grid">
-                    <div class="stat-card active" onclick="filterByCard('all')" data-filter="all">
-                        <div class="stat-label">Total Steps</div>
-                        <div class="stat-value" id="totalSteps">0</div>
-                    </div>
-                    <div class="stat-card warning" onclick="filterByCard('slow')" data-filter="slow">
-                        <div class="stat-label">Slow Steps</div>
-                        <div class="stat-value" id="slowSteps">0</div>
-                    </div>
-                    <div class="stat-card danger" onclick="filterByCard('critical')" data-filter="critical">
-                        <div class="stat-label">Critical Issues</div>
-                        <div class="stat-value" id="criticalIssues">0</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Timeline Section -->
-        <div id="timelineSection" class="hidden">
-            <div class="timeline">
-                <h2>
-                    <span>Startup Timeline</span>
-                </h2>
-                <div id="timelineContent"></div>
-            </div>
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="empty-state">
-            <h3>No Data Available</h3>
-            <p>Enter your /actuator/startup endpoint URL and click Analyze to view detailed startup metrics</p>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loadingState" class="loading hidden">
-            <h3>Analyzing...</h3>
-            <p>Fetching startup data from endpoint</p>
         </div>
     </div>
 
-    <!-- JavaScript -->
-    <script src="js/app.js"></script>
+    <!-- Summary Section -->
+    <div class="hidden" id="summarySection">
+        <div class="summary">
+            <h2>
+                <span>Startup Summary</span>
+                <span class="summary-note">
+                        Total Duration: <span class="highlight" id="totalDuration">0s</span>
+                    </span>
+            </h2>
+            <div class="stats-grid">
+                <div class="stat-card active" data-filter="all">
+                    <div class="stat-label">Total Steps</div>
+                    <div class="stat-value" id="totalSteps">0</div>
+                </div>
+                <div class="stat-card warning" data-filter="slow">
+                    <div class="stat-label">Slow Steps</div>
+                    <div class="stat-value" id="slowSteps">0</div>
+                </div>
+                <div class="stat-card danger" data-filter="critical">
+                    <div class="stat-label">Critical Issues</div>
+                    <div class="stat-value" id="criticalIssues">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline Section -->
+    <div class="hidden" id="timelineSection">
+        <div class="timeline">
+            <h2>
+                <span>Startup Timeline</span>
+            </h2>
+            <div id="timelineContent"></div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState">
+        <h3>No Data Available</h3>
+        <p>Enter your /actuator/startup endpoint URL and click Load from URL, then click Summarize JSON to view detailed startup metrics</p>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading hidden" id="loadingState">
+        <h3>Analyzing...</h3>
+        <p>Fetching startup data from the endpoint</p>
+    </div>
+</div>
+
+<!-- LLM Results Section -->
+<div class="hidden" id="llmResultsSection" style="max-width: 980px; margin: 24px auto;">
+    <div class="timeline">
+        <h2>
+            <span>LLM Analysis</span>
+        </h2>
+        <div id="llmResultsContent" style="white-space: pre-wrap;
+                 background: var(--card-bg, #111);
+                 border: 1px solid var(--border-color, #333);
+                 border-radius: 8px; padding: 16px;
+                 font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+                 font-size: 0.92rem;
+            "></div>
+    </div>
+</div>
+
+<!-- LLM Settings Modal -->
+<div class="hidden" id="llmSettingsModal"
+     style="position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="width: 520px; max-width: 92vw; background: var(--card-bg, #0f0f10); border: 1px solid var(--border-color, #333); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
+        <div style="padding: 16px 18px; border-bottom: 1px solid var(--border-color, #333); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0;">LLM Settings</h3>
+            <button aria-label="Close" class="btn btn-secondary" id="llmCloseBtn"
+                    title="Discard unsaved changes and close">✕
+            </button>
+        </div>
+        <div style="padding: 16px 18px; display: grid; gap: 12px;">
+            <!-- Profiles -->
+            <div style="display: grid; gap: 8px;">
+                <label style="display: grid; gap: 6px;">
+                    <span>Profiles</span>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <select class="input" id="llmProfileSelect" style="flex:1;"></select>
+                        <button aria-label="New profile" class="btn btn-secondary" id="llmNewBtn" title="New profile">
+                            ➕
+                        </button>
+                        <button aria-label="Delete profile" class="btn btn-danger" id="llmDeleteBtn"
+                                title="Delete profile">🗑️
+                        </button>
+                    </div>
+                </label>
+                <label style="display: grid; gap: 6px;">
+                    <span>Profile Name</span>
+                    <input class="input" id="llmProfileName" placeholder="My Profile (e.g., OpenRouter Dev)"
+                           type="text"/>
+                </label>
+            </div>
+
+            <!-- Provider -->
+            <label style="display: grid; gap: 6px;">
+                <span>LLM Provider</span>
+                <select class="input" id="llmPreset">
+                    <option value="openrouter">OpenRouter (Default)</option>
+                    <option value="openai">OpenAI</option>
+                    <option value="anthropic">Anthropic</option>
+                    <option value="deepseek">DeepSeek</option>
+                    <option value="custom">OpenAI Compatible</option>
+                </select>
+            </label>
+
+            <!-- Connection details -->
+            <label id="llmBaseUrlRow" style="display: grid; gap: 6px;">
+                <span>Base URL</span>
+                <input class="input" id="llmBaseUrl" placeholder="https://openrouter.ai/api/v1/chat/completions"
+                       type="text"/>
+            </label>
+            <label style="display: grid; gap: 6px;">
+                <span>API Key</span>
+                <input class="input" id="llmApiKey" placeholder="sk-..." type="password"/>
+            </label>
+            <label style="display: grid; gap: 6px;">
+                <span>Model</span>
+                <input class="input" id="llmModel" placeholder="qwen/qwen3-235b-a22b:free" type="text"/>
+            </label>
+
+            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px;">
+                <button aria-label="Done" class="btn btn-secondary" id="llmDoneBtn"
+                        title="Discard unsaved changes and close">Done
+                </button>
+                <button aria-label="Save" class="btn btn-primary" id="llmSaveBtn" title="Save changes to this profile">
+                    Save
+                </button>
+            </div>
+            <p style="margin: 0; font-size: 0.9rem; opacity: 0.8;">
+                Notes:
+                <br>— Default (OpenRouter) profile is read-only. Create a new profile to customize settings.
+                <br>— OpenRouter is the default provider. You can add multiple profiles and switch anytime.
+                <br>— Your API key is stored locally in this browser via localStorage. For production, consider a secure
+                server proxy to avoid exposing keys to clients.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<!-- Core/order: foundation first -->
+<!-- LLM stack: PromptBuilder (IIFE) + ESM bootstrap for manager/client/settings controller -->
+<!-- Dashboard entry -->
+<script src="js/app/AppController.js" type="module"></script>
 </body>
 </html>

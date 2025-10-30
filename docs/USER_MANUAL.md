@@ -18,7 +18,8 @@
 
 ## Introduction
 
-The Spring Boot Startup Analyzer is a web-based tool designed to help developers visualize and optimize their Spring Boot application startup times. It connects to your application's `/actuator/startup` endpoint and provides:
+The Spring Boot Startup Analyzer is a web-based tool designed to help developers visualize and optimize their Spring
+Boot application startup times. It connects to your application's `/actuator/startup` endpoint and provides:
 
 - Visual representation of startup timeline
 - Performance bottleneck identification
@@ -50,6 +51,7 @@ http://your-spring-boot-app.com/actuator/startup
 #### 1. Add Dependencies
 
 **Maven** (`pom.xml`):
+
 ```xml
 <dependencies>
     <!-- Spring Boot Actuator -->
@@ -61,6 +63,7 @@ http://your-spring-boot-app.com/actuator/startup
 ```
 
 **Gradle** (`build.gradle`):
+
 ```gradle
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -70,6 +73,7 @@ dependencies {
 #### 2. Configure Application Properties
 
 **application.properties**:
+
 ```properties
 # ====================================
 # Actuator Configuration
@@ -102,6 +106,7 @@ management.endpoints.web.cors.allow-credentials=true
 ```
 
 **application.yml**:
+
 ```yaml
 management:
   endpoint:
@@ -205,11 +210,13 @@ public class CorsConfiguration implements WebMvcConfigurer {
 After starting your application, test the endpoint:
 
 **Using curl**:
+
 ```bash
 curl http://localhost:8080/actuator/startup
 ```
 
 **Using your browser**:
+
 ```
 http://localhost:8080/actuator/startup
 ```
@@ -223,8 +230,9 @@ You should see JSON output containing `timeline` and `events`.
 #### 1. Open the Application
 
 Open `index.html` in your browser. You'll see:
+
 - Header with app title and theme toggle
-- Input field with "Analyze" button
+- Input field with "Load from URL" button
 - "Expand All" checkbox
 - Empty state message
 
@@ -233,13 +241,15 @@ Open `index.html` in your browser. You'll see:
 In the input field, enter your Spring Boot application's startup endpoint:
 
 **Examples**:
+
 - `http://localhost:8080/actuator/startup`
 - `http://localhost:7811/api/actuator/startup`
 - `https://your-app.com/actuator/startup`
 
-#### 3. Click "Analyze"
+#### 3. Click "Summarize JSON"
 
 The application will:
+
 1. Show a loading indicator
 2. Fetch data from your endpoint
 3. Process and analyze the timeline
@@ -247,13 +257,17 @@ The application will:
 
 #### Alternative: File or Paste JSON (unified editor)
 
-If you have previously saved the JSON output from your application's `/actuator/startup` endpoint, or want to paste it directly:
+If you have previously saved the JSON output from your application's `/actuator/startup` endpoint, or want to paste it
+directly:
 
-1. Choose a `.json` file using the file selector — the file's content will appear in the editor below for preview/editing — or paste the JSON into the editor.
-2. Click "Load JSON" to analyze it locally.
-3. Use the "Clear" button at any time to reset the URL field, selected file, editor, and results back to the empty state.
+1. Choose a `.json` file using the file selector — the file's content will appear in the editor below for
+   preview/editing — or paste the JSON into the editor.
+2. Click "Summarize JSON" to analyze it locally.
+3. Use the "Clear" button at any time to reset the URL field, selected file, editor, and results back to the empty
+   state.
 
 Notes:
+
 - Parsing is strict JSON (no comments or trailing commas)
 - Data is processed entirely in your browser; nothing is uploaded anywhere
 - If the JSON is malformed, an error message will be shown
@@ -263,12 +277,14 @@ Notes:
 After successful analysis, you'll see:
 
 **Summary Section**:
+
 - Total startup duration
 - Total number of steps
 - Count of slow steps
 - Count of critical issues
 
 **Timeline Section**:
+
 - Interactive tree view of all startup steps
 - Color-coded performance indicators
 - Progress bars showing relative duration
@@ -284,22 +300,25 @@ After successful analysis, you'll see:
 ### Input Section
 
 - **URL Input**: Enter your actuator endpoint URL
-- **Analyze Button**: Fetch and analyze startup data
+- **Load from URL Button**: Fetch JSON from the URL into the editor (no processing)
 - **Expand All**: Checkbox to expand all step details
 
 ### Summary Cards
 
 #### Total Steps Card (Blue Border)
+
 - Shows total number of startup steps
 - Click to show all steps (removes filters)
 - Active by default
 
 #### Slow Steps Card (Yellow Border)
+
 - Shows count of steps slower than 2x average
 - Click to filter and show only slow steps
 - Helps identify performance concerns
 
 #### Critical Issues Card (Red Border)
+
 - Shows count of steps slower than 3x average
 - Click to filter and show only critical steps
 - Identifies severe performance problems
@@ -309,6 +328,7 @@ After successful analysis, you'll see:
 Each timeline item shows:
 
 **Header**:
+
 - Collapse icon (▶) for parent items
 - Severity icon (if applicable)
 - Step name
@@ -316,14 +336,16 @@ Each timeline item shows:
 - Duration
 
 **Progress Bar**:
+
 - Visual representation of duration
 - Color-coded by severity:
-  - Green: Fast steps
-  - Blue: Normal steps
-  - Yellow: Slow steps
-  - Red: Critical steps
+    - Green: Fast steps
+    - Blue: Normal steps
+    - Yellow: Slow steps
+    - Red: Critical steps
 
 **Details Section** (click to expand):
+
 - Step description
 - Step ID and parent ID
 - Start and end timestamps
@@ -332,44 +354,50 @@ Each timeline item shows:
 
 ### Severity Levels
 
-| Severity | Color | Criteria | Meaning |
-|----------|-------|----------|---------|
-| **Fast** | 🟢 Green | < average | Performing well |
-| **Normal** | 🔵 Blue | ~average | As expected |
-| **Slow** | 🟡 Yellow | > 2x average | Needs attention |
-| **Critical** | 🔴 Red | > 3x average | Performance issue |
+| Severity     | Color     | Criteria     | Meaning           |
+|--------------|-----------|--------------|-------------------|
+| **Fast**     | 🟢 Green  | < average    | Performing well   |
+| **Normal**   | 🔵 Blue   | ~average     | As expected       |
+| **Slow**     | 🟡 Yellow | > 2x average | Needs attention   |
+| **Critical** | 🔴 Red    | > 3x average | Performance issue |
 
 ## Advanced Features
 
 ### Tree Navigation
 
 #### Single-Click Behavior
+
 - Expands/collapses the **details** of a step
 - Shows description, timestamps, and tags
 - Works on all steps (parent and leaf)
 
 #### Double-Click Behavior
+
 - Expands/collapses **child steps** (only for parent items)
 - Reveals nested startup phases
 - Useful for exploring component initialization
 
 #### Visual Indicators
+
 - **▶ icon**: Collapsed children
 - **▼ icon**: Expanded children (rotates 90° when expanded)
 
 ### Filtering
 
 #### Filter by Card Click
+
 1. Click **Total Steps**: Shows all steps
 2. Click **Slow Steps**: Shows only yellow/slow steps
 3. Click **Critical Issues**: Shows only red/critical steps
 
 **Visual Feedback**:
+
 - Active card has a colored border
 - Inactive items are hidden
 - Counts update dynamically
 
 #### Using "Expand All"
+
 - Check the box to expand details for all visible steps
 - Uncheck to collapse all details
 - Works with current filter
@@ -377,15 +405,18 @@ Each timeline item shows:
 ### Theme Management
 
 #### Auto-Detection
+
 - Detects your system's dark/light mode preference
 - Applies matching theme on first load
 
 #### Manual Toggle
+
 - Click 🌙 icon to switch to dark mode
 - Click ☀️ icon to switch to light mode
 - Preference saved in browser's local storage
 
 #### Theme Persistence
+
 - Your choice is remembered across sessions
 - Stored in `localStorage`
 - Survives browser restarts
@@ -395,48 +426,57 @@ Each timeline item shows:
 ### Identifying Bottlenecks
 
 1. **Look for Critical Issues**
-   - Click the "Critical Issues" card
-   - Focus on red-colored items
-   - These are 3x slower than average
+    - Click the "Critical Issues" card
+    - Focus on red-colored items
+    - These are 3x slower than average
 
 2. **Check Slow Steps**
-   - Click the "Slow Steps" card
-   - Review yellow-colored items
-   - These are 2x slower than average
+    - Click the "Slow Steps" card
+    - Review yellow-colored items
+    - These are 2x slower than average
 
 3. **Analyze Total Duration**
-   - Review the "Total Duration" metric
-   - Compare with your performance targets
-   - Industry standard: < 10 seconds for most apps
+    - Review the "Total Duration" metric
+    - Compare with your performance targets
+    - Industry standard: < 10 seconds for most apps
 
 ### Common Problem Areas
 
 #### Database Connection Pooling
+
 **Symptoms**:
+
 - Long duration for database initialization steps
 - Steps containing "DataSource" or "JPA"
 
 **Solutions**:
+
 - Tune connection pool settings
 - Reduce initial pool size
 - Use lazy initialization
 
 #### Component Scanning
+
 **Symptoms**:
+
 - Steps containing "component-scan" or "base-packages.scan"
 - Multiple slow bean instantiation steps
 
 **Solutions**:
+
 - Reduce package scan scope
 - Use explicit component registration
 - Enable lazy bean initialization
 
 #### Auto-Configuration
+
 **Symptoms**:
+
 - Many slow steps in context loading phase
 - Steps containing "auto-configuration"
 
 **Solutions**:
+
 - Exclude unused auto-configurations
 - Use conditional beans
 - Profile-specific configurations
@@ -466,6 +506,7 @@ A: The analyzer can be used anywhere, but we recommend using the startup endpoin
 
 **Q: Why is my endpoint returning 404?**
 A: Ensure:
+
 - Actuator dependency is added
 - `management.endpoint.startup.enabled=true` is set
 - Your app has been restarted after configuration
@@ -487,7 +528,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 ```
 
 **Q: What is BufferingApplicationStartup?**
-A: It's a Spring Boot feature that records startup events in memory, making them available through the actuator endpoint.
+A: It's a Spring Boot feature that records startup events in memory, making them available through the actuator
+endpoint.
 
 ### Usage Questions
 
@@ -499,6 +541,7 @@ A: Currently, you can take screenshots or use browser developer tools to save th
 
 **Q: How often should I analyze startup performance?**
 A: Run analysis:
+
 - After adding new dependencies
 - When startup time increases noticeably
 - Before major releases
@@ -533,10 +576,6 @@ A: Run analysis:
 
 **Need more help?** Check the [README.md](../README.md) or open an issue on GitHub.
 
-
-
-
-
 ## System Requirements
 
 - Browser: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
@@ -548,11 +587,12 @@ A: Run analysis:
 
 - Processing is entirely client-side; no backend is used by this tool.
 - When analyzing from a URL, your browser requests the JSON directly from your app.
-- If your actuator is protected, use credentials as configured in your environment; do not paste sensitive data into shared machines.
+- If your actuator is protected, use credentials as configured in your environment; do not paste sensitive data into
+  shared machines.
 - Recommended practices:
-  - Use the analyzer primarily in development or staging.
-  - Limit actuator exposure and scope (`management.endpoints.web.exposure.include`).
-  - Apply appropriate CORS and security policies (examples provided in this manual).
+    - Use the analyzer primarily in development or staging.
+    - Limit actuator exposure and scope (`management.endpoints.web.exposure.include`).
+    - Apply appropriate CORS and security policies (examples provided in this manual).
 
 ## Known Limitations
 
@@ -566,4 +606,87 @@ A: Run analysis:
 
 - For feature requests or bugs, open an issue in the repository.
 - See the README for an overview and this User Manual for detailed usage and setup.
-- Please include your Spring Boot version, a redacted sample of the startup JSON (if possible), and browser details when reporting issues.
+- Please include your Spring Boot version, a redacted sample of the startup JSON (if possible), and browser details when
+  reporting issues.
+
+## Using AI (LLM) analysis
+
+The analyzer can optionally use an LLM (AI model) to generate a concise, actionable summary of your startup data.
+
+What you need
+
+- A provider account and API key. Supported providers: OpenRouter (default), OpenAI, Anthropic, DeepSeek, or a custom
+  OpenAI‑compatible endpoint.
+- Internet access from the browser to the provider’s API (mind CORS if you’re loading `index.html` directly from disk).
+
+Open LLM Settings
+
+1) Click the menu button (☰) in the header → LLM Settings.
+2) Profiles
+    - Default (OpenRouter) profile is read‑only. Create a new profile to customize.
+    - You can maintain multiple profiles (e.g., OpenAI, Anthropic) and switch between them.
+3) Provider
+    - Choose a provider to auto‑fill Base URL and a suggested model. For OpenAI Compatible, provide a Base URL manually.
+4) API Key & Model
+    - Paste your API key and specify a model/deployment when required by the provider.
+5) Save
+    - Save to persist the profile. Keys are stored in your browser’s localStorage only.
+
+Run an AI analysis
+
+1) Load your `/actuator/startup` JSON (by URL, file, or paste → Load JSON).
+2) Click Analyze with LLM under the editor.
+3) Optional: Toggle Send full JSON to control how much data is sent to the model (details below).
+4) You’ll see status updates and a Cancel button while the request is in flight.
+5) The result appears in the LLM Analysis panel as plain text.
+
+Send full JSON toggle
+
+- Off (default): Compact prompt mode. The app sends a computed summary (counts, durations, top slow steps) and only a
+  truncated excerpt of the JSON (≈100 KB cap) to minimize tokens and reduce rate limits.
+- On: Full prompt mode. The app sends the entire `/actuator/startup` JSON to the model. This may consume more tokens and
+  be slower.
+
+Exact prompts used
+
+When Send full JSON is OFF (compact prompt)
+
+- System:
+  "You are an expert Spring Boot performance engineer. Provide a concise analysis with a brief summary, the top
+  bottlenecks, and actionable optimization steps."
+- User:
+  The app composes the message using an internal PromptBuilder with:
+    - A summary block (total steps, total duration, average duration, slow/critical counts)
+    - Top N slowest/critical steps
+    - A truncated JSON excerpt (default cap ~100 KB)
+    - Ending instruction: "Return only plain text, no markdown tables."
+
+When Send full JSON is ON (full JSON prompt)
+
+- System:
+  "You are an expert Spring Boot performance engineer. Analyze startup timeline JSON and provide: 1) a brief summary, 2)
+  the top bottlenecks (slow/critical), and 3) actionable optimization suggestions. Keep it concise."
+- User:
+  "Here is the /actuator/startup JSON to analyze: <entire JSON>.\n\nReturn only plain text, no markdown tables."
+
+Providers and presets
+
+- OpenRouter (Default): Preconfigured endpoint and a suggested free model. Good for quick trials.
+- OpenAI: Standard chat completions endpoint.
+- Anthropic: Messages API.
+- DeepSeek: OpenAI‑compatible chat completions.
+- OpenAI Compatible: Any endpoint that supports the OpenAI Chat Completions API schema; you must provide Base URL and
+  Model.
+
+Troubleshooting
+
+- CORS: If fetching startup JSON by URL, host the UI via a local server (e.g., `python -m http.server 8000`) or
+  configure CORS on your app.
+- 401/403: Verify API key and model in LLM Settings; some providers require specific headers or project setup.
+- 429 (rate limit): Try later, select a smaller/faster model, or keep Full JSON off. The client retries with backoff and
+  may fall back to lighter models for OpenAI‑compatible providers.
+
+Privacy & security
+
+- API keys are stored locally in your browser (localStorage) and are never sent to any server by this UI.
+- For production use, consider a server‑side proxy to call the provider securely and to apply rate limiting.

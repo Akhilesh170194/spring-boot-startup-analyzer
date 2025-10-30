@@ -13,39 +13,49 @@ A lightweight web UI to visualize and analyze Spring Boot startup performance fr
 - Fully client-side (no server required)
 
 For the complete user guide, configuration, and troubleshooting, see the User Manual:
+
 - docs/USER_MANUAL.md
 
 ## Quick Start
 
 1. Download the project and open `index.html` in a modern browser.
-2. Option A — From URL: Enter your Spring Boot Actuator startup endpoint, e.g. `http://localhost:8080/actuator/startup`, then click Analyze.
-3. Option B — From file or paste: Choose a JSON file exported from `/actuator/startup` — its content will appear in the editor — or paste the JSON directly in the editor, then click "Load JSON".
+2. Option A — From URL: Enter your Spring Boot Actuator startup endpoint, e.g. `http://localhost:8080/actuator/startup`,
+   then click Load from URL to populate the editor, and click "Summarize JSON" to render the analysis.
+3. Option B — From file or paste: Choose a JSON file exported from `/actuator/startup` — its content will appear in the
+   editor — or paste the JSON directly in the editor, then click "Summarize JSON".
 
-Tip: To avoid CORS in some setups when using the URL option, serve the files via a simple local web server (e.g., `python -m http.server 8000`).
+Tip: To avoid CORS in some setups when using the URL option, serve the files via a simple local web server (e.g.,
+`python -m http.server 8000`).
 
 ## Run with Docker Compose
 
 The UI is a static site. You can serve it locally with Docker in seconds.
 
 Prerequisites:
+
 - Docker Desktop (includes Docker Compose)
 
 Steps:
+
 1. From the repository root, run:
-   - `docker compose up -d`
+    - `docker compose up -d`
 2. Open http://localhost:8000 in your browser (default).
 3. When finished, stop and remove the container:
-   - `docker compose down`
+    - `docker compose down`
 
 Customize the host port (optional):
-- The container exposes port 80 (nginx default). The compose file publishes it to your host port using an environment variable `UI_PORT` with a default of `8000`.
+
+- The container exposes port 80 (nginx default). The compose file publishes it to your host port using an environment
+  variable `UI_PORT` with a default of `8000`.
 - Examples:
-  - PowerShell: `$env:UI_PORT=9000; docker compose up -d` then open http://localhost:9000
-  - Bash: `UI_PORT=9000 docker compose up -d` then open http://localhost:9000
+    - PowerShell: `$env:UI_PORT=9000; docker compose up -d` then open http://localhost:9000
+    - Bash: `UI_PORT=9000 docker compose up -d` then open http://localhost:9000
 
 Notes:
+
 - The compose file pulls and runs the prebuilt image `akhileshsingh170194/spring-boot-startup-analyzer:1.0.0`.
-- If you use the Analyze (URL) option, ensure your Spring Boot app allows CORS from `http://localhost:${UI_PORT:-8000}` (see docs/USER_MANUAL.md for examples).
+- If you use the Load from URL option, ensure your Spring Boot app allows CORS from
+  `http://localhost:${UI_PORT:-8000}` (see docs/USER_MANUAL.md for examples).
 
 ## Features
 
@@ -64,7 +74,23 @@ spring-boot-startup-analyzer/
 ├── css/
 │   └── styles.css
 ├── js/
-│   └── app.js
+│   ├── app/
+│   │   ├── AppController.js         # ES module entry for the dashboard
+│   │   ├── Utils.js                 # StartupStepUtils helpers
+│   │   ├── state/AppStateStore.js   # Central state + DOM refs
+│   │   ├── data/StartupDataProcessor.js
+│   │   ├── ui/TimelineRenderer.js
+│   │   ├── ui/FilterManager.js
+│   │   └── services/{FileAndEventService,ThemeService}.js
+│   ├── ui
+│   │   ├── LlmSettingsController.js  # LLM Settings modal controller
+│   ├── llm
+│   │   ├── ProviderPresets.js
+│   │   ├── ProfileStore.js
+│   │   ├── LLMManager.js
+│   │   ├── LLMClient.js
+│   │   ├── Adapters.js
+│   │   ├── PromptBuilder.js
 ├── docs/
 │   └── USER_MANUAL.md
 ├── LICENSE
@@ -81,6 +107,7 @@ For full Spring Boot configuration examples (Maven/Gradle, properties/YAML, CORS
 ## Contributing
 
 Contributions are welcome! Please:
+
 - Fork the repo and create a feature branch
 - Make changes with minimal scope and clear commit messages
 - Test locally and open a PR
@@ -98,7 +125,8 @@ MIT License — see LICENSE.
 
 - All data is processed locally in your browser; no information is sent to external servers.
 - When using the URL option, your browser fetches the JSON directly from your Spring Boot app.
-- If your actuator endpoints require authentication or are internal-only, use this tool in development or a secure environment.
+- If your actuator endpoints require authentication or are internal-only, use this tool in development or a secure
+  environment.
 
 ## Project Status and Compatibility
 
@@ -110,10 +138,6 @@ MIT License — see LICENSE.
 
 - Keyboard navigation, focus-visible styles, and high-contrast themes are supported.
 - Tested on recent versions of Chrome, Firefox, Safari, and Edge (see Requirements for minimum versions).
-
-
-
-
 
 ## Run with Docker (prebuilt image)
 
@@ -134,14 +158,17 @@ docker stop spring-boot-startup-analyzer && docker rm spring-boot-startup-analyz
 ```
 
 Notes:
+
 - The container exposes port 80; map to any host port as needed (e.g., -p 9000:80 → http://localhost:9000).
-- If you use the Analyze (URL) option, ensure your Spring Boot app allows CORS from the host where this UI runs (e.g., http://localhost:8001).
+- If you use the Load from URL option, ensure your Spring Boot app allows CORS from the host where this UI runs (
+  e.g., http://localhost:8001).
 
 ## Build and Publish a Docker Image
 
 You can package the static UI into a small Docker image and push it to a public registry (e.g., Docker Hub).
 
 Prerequisites:
+
 - A Docker Hub account (or any container registry account)
 - Docker Desktop / CLI installed and logged in (`docker login`)
 
@@ -153,16 +180,19 @@ docker build -t YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:latest .
 ```
 
 Test locally:
+
 ```
 docker run --rm -p 8000:80 YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:latest
 # Open http://localhost:8000
 ```
 
 Version/tag recommendations:
+
 - Use semantic tags when you make visible changes (e.g., `v1.0.0`, `v1.0.1`).
 - Keep `:latest` updated to the newest stable release.
 
 Push to Docker Hub:
+
 ```
 # If not already authenticated
 docker login
@@ -175,11 +205,15 @@ docker push YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:latest
 ```
 
 Notes:
+
 - This is a static app served by nginx; no server-side code runs. The container simply serves the HTML/CSS/JS.
-- When using the Analyze (URL) option, ensure your Spring Boot app allows CORS from the host where this container is running (e.g., `http://localhost:8000` or your public domain). See docs/USER_MANUAL.md for configuration examples.
-- To host publicly, push to a public repository on Docker Hub and reference the image in your deployment platform (Kubernetes, ECS, ACI, Fly.io, etc.).
+- When using the Analyze (URL) option, ensure your Spring Boot app allows CORS from the host where this container is
+  running (e.g., `http://localhost:8000` or your public domain). See docs/USER_MANUAL.md for configuration examples.
+- To host publicly, push to a public repository on Docker Hub and reference the image in your deployment platform (
+  Kubernetes, ECS, ACI, Fly.io, etc.).
 
 Alternative: GitHub Container Registry (GHCR):
+
 ```
 # Login (uses GitHub token with `write:packages` scope)
 docker login ghcr.io -u YOUR_GITHUB_USERNAME -p YOUR_GITHUB_TOKEN
@@ -188,3 +222,58 @@ docker login ghcr.io -u YOUR_GITHUB_USERNAME -p YOUR_GITHUB_TOKEN
 docker tag YOUR_DOCKERHUB_USERNAME/startup-analyzer-ui:latest ghcr.io/YOUR_GITHUB_USERNAME/startup-analyzer-ui:latest
 docker push ghcr.io/YOUR_GITHUB_USERNAME/startup-analyzer-ui:latest
 ```
+
+## AI-assisted analysis (LLM)
+
+This project includes optional AI assistance to summarize and highlight bottlenecks in your `/actuator/startup` data.
+
+- Button: Analyze with LLM (appears below the JSON editor once you paste or load JSON)
+- Settings: Open the header menu → LLM Settings to configure a provider and API key
+- Providers: OpenRouter (default), OpenAI, Anthropic, DeepSeek, or an OpenAI Compatible endpoint (requires explicit
+  model)
+- Privacy: Your API key is stored locally in your browser (localStorage). For production use, consider a secure
+  server-side proxy.
+
+How to use
+
+- Load your JSON (Load from URL, file, or paste → Summarize JSON) → then click Analyze with LLM
+- Optional: Toggle “Send full JSON” to control how much data is sent to the model
+- You can cancel an in-flight request using the Cancel button shown near the results
+
+Send full JSON toggle
+
+- Off (default): The app builds a compact prompt with a computed summary (counts, durations, top slow steps) and
+  includes a truncated snippet of the JSON. This minimizes tokens and reduces rate-limit risk.
+- On: The app sends the full `/actuator/startup` JSON along with an analysis task. This may be slower and can hit token
+  limits depending on the provider/model.
+
+Exact prompts used
+
+When Send full JSON is OFF (compact prompt)
+
+- System:
+  "You are an expert Spring Boot performance engineer. Provide a concise analysis with a brief summary, the top
+  bottlenecks, and actionable optimization steps."
+- User:
+  "Summary and top slow steps are precomputed, followed by a truncated JSON excerpt. Return only plain text, no markdown
+  tables."
+  Note: The app composes this using an internal PromptBuilder, which includes:
+    - A summary block (total steps, total duration, average duration, counts of slow/critical steps)
+    - Top N slowest/critical steps
+    - A truncated JSON excerpt (default cap ~100 KB)
+    - A closing instruction: "Return only plain text, no markdown tables."
+
+When Send full JSON is ON (full JSON prompt)
+
+- System:
+  "You are an expert Spring Boot performance engineer. Analyze startup timeline JSON and provide: 1) a brief summary, 2)
+  the top bottlenecks (slow/critical), and 3) actionable optimization suggestions. Keep it concise."
+- User:
+  "Here is the /actuator/startup JSON to analyze: <entire JSON>.\n\nReturn only plain text, no markdown tables."
+
+Troubleshooting
+
+- CORS: If you fetch from a URL and see CORS errors, serve this UI from a local web server or use a proxy.
+- 401/403: Check API keys and model names in LLM Settings.
+- 429 (rate limit): Try again later, select a lighter model, or enable the compact prompt (toggle off Full JSON). The
+  client retries with backoff and may auto-fallback to a smaller model for OpenAI-compatible providers.

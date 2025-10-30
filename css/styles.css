@@ -12,7 +12,10 @@
     --color-warning: #ffc107;
     --color-danger: #dc3545;
     --color-border: #dee2e6;
-    --shadow: 0 2px 8px rgba(0,0,0,0.1);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* card + border tokens used by LLM modal/results */
+    --card-bg: var(--color-surface);
+    --border-color: var(--color-border);
 }
 
 /* Dark mode - System preference */
@@ -26,7 +29,9 @@
         --color-warning: #ffd43b;
         --color-danger: #ff6b6b;
         --color-border: #495057;
-        --shadow: 0 2px 8px rgba(0,0,0,0.3);
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --card-bg: var(--color-surface);
+        --border-color: var(--color-border);
     }
 }
 
@@ -40,7 +45,7 @@
     --color-warning: #ffd43b;
     --color-danger: #ff6b6b;
     --color-border: #495057;
-    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Light mode - Manual toggle */
@@ -53,7 +58,7 @@
     --color-warning: #ffc107;
     --color-danger: #dc3545;
     --color-border: #dee2e6;
-    --shadow: 0 2px 8px rgba(0,0,0,0.1);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* ============================================
@@ -73,11 +78,33 @@ body {
 }
 
 /* Utility classes */
-.flex-between-center { display: flex; justify-content: space-between; align-items: center; }
-.inline-checkbox { display: flex; align-items: center; gap: 5px; margin-left: 10px; }
-.hidden { display: none !important; }
-.summary-note { font-size: 14px; font-weight: normal; color: #6c757d; }
-.highlight { color: var(--color-text); font-weight: 600; }
+.flex-between-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inline-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.summary-note {
+    font-size: 14px;
+    font-weight: normal;
+    color: #6c757d;
+}
+
+.highlight {
+    color: var(--color-text);
+    font-weight: 600;
+}
 
 /* ============================================
    LAYOUT COMPONENTS
@@ -87,6 +114,9 @@ body {
     padding: 20px;
     box-shadow: var(--shadow);
     margin-bottom: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .header h1 {
@@ -145,22 +175,25 @@ body {
    BUTTONS
    ============================================ */
 .btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 6px;
+    padding: 10px 16px;
+    border-radius: 8px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--color-bg), white 6%), var(--color-bg));
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
 }
 
 .btn-primary {
-    background: var(--color-primary);
-    color: white;
+    color: #fff;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--color-primary) 92%, white 8%), var(--color-primary));
+    border: 1px solid color-mix(in oklab, var(--color-primary) 80%, var(--color-border));
 }
 
 .btn-primary:hover {
-    background: #0b5ed7;
+    filter: brightness(0.97);
 }
 
 .theme-toggle {
@@ -457,6 +490,7 @@ body {
         color: #ced4da; /* brighter than #6c757d on dark backgrounds */
         border-top-color: #6c757d;
     }
+
     /* Ensure key info stands out */
     .timeline-name,
     .timeline-duration {
@@ -469,6 +503,7 @@ body {
     color: #ced4da;
     border-top-color: #6c757d;
 }
+
 [data-theme="dark"] .stat-label {
     color: #adb5bd;
 }
@@ -479,6 +514,7 @@ body {
     line-height: 1.5;
     color: #495057; /* light-mode secondary */
 }
+
 .tag {
     display: inline-block;
     background: #e9ecef; /* light mode chip */
@@ -487,7 +523,7 @@ body {
     border-radius: 3px;
     font-size: 11px;
     margin-right: 4px;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Dark mode adjustments for tags and description */
@@ -495,19 +531,22 @@ body {
     .timeline-desc {
         color: #cfd4da; /* slightly brighter for dark */
     }
+
     .tag {
-        background: rgba(255,255,255,0.08);
+        background: rgba(255, 255, 255, 0.08);
         color: #e9ecef;
-        border: 1px solid rgba(255,255,255,0.15);
+        border: 1px solid rgba(255, 255, 255, 0.15);
     }
 }
+
 [data-theme="dark"] .timeline-desc {
     color: #cfd4da;
 }
+
 [data-theme="dark"] .tag {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.08);
     color: #e9ecef;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 
@@ -536,20 +575,23 @@ body {
     background: linear-gradient(180deg, color-mix(in oklab, var(--color-surface) 92%, var(--color-bg)), var(--color-surface));
     border-bottom: 1px solid var(--color-border);
 }
+
 .logo {
     width: 36px;
     height: 36px;
     font-size: 18px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* Input toolbar responsiveness and consistency */
 .input-group {
     flex-wrap: wrap;
 }
+
 .input-group input[type="text"] {
     min-width: 260px;
 }
+
 .input-group .btn,
 .input-group input[type="file"],
 .input-group input[type="text"],
@@ -570,6 +612,7 @@ input[type="file"] {
     height: 42px;
     line-height: 1;
 }
+
 input[type="file"]::file-selector-button {
     border: none;
     background: var(--color-primary);
@@ -588,16 +631,49 @@ input[type="file"]::file-selector-button {
     accent-color: var(--color-primary);
 }
 
+/* Modal/input base controls */
+.input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 14px;
+    transition: box-shadow .2s, border-color .2s, background-color .2s;
+}
+
+.input::placeholder {
+    color: color-mix(in oklab, var(--color-text) 50%, transparent);
+}
+
+.input:hover {
+    background: color-mix(in oklab, var(--color-surface) 96%, var(--color-bg));
+}
+
+.input:focus {
+    border-color: color-mix(in oklab, var(--color-primary) 55%, var(--color-border));
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 22%, transparent);
+    outline: none;
+}
+
+.input:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
 /* Inputs: stronger focus ring and hover */
 .input-group input[type="text"],
 .paste-area {
     outline: none;
     transition: box-shadow .2s, border-color .2s, background-color .2s;
 }
+
 .input-group input[type="text"]:hover,
 .paste-area:hover {
     background: color-mix(in oklab, var(--color-surface) 96%, var(--color-bg));
 }
+
 .input-group input[type="text"]:focus,
 .paste-area:focus {
     border-color: color-mix(in oklab, var(--color-primary) 60%, var(--color-border));
@@ -609,14 +685,17 @@ input[type="file"]::file-selector-button {
     background: linear-gradient(180deg, color-mix(in oklab, var(--color-bg), white 6%), var(--color-bg));
     border: 1px solid var(--color-border);
 }
+
 .btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
+
 .btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
+
 .btn:focus-visible,
 .theme-toggle:focus-visible,
 .input-group input[type="text"]:focus-visible,
@@ -630,6 +709,7 @@ input[type="file"]::file-selector-button {
     background: linear-gradient(180deg, color-mix(in oklab, var(--color-primary) 92%, white 8%), var(--color-primary));
     border-color: color-mix(in oklab, var(--color-primary) 80%, var(--color-border));
 }
+
 .btn-primary:hover {
     filter: brightness(0.97);
 }
@@ -640,9 +720,11 @@ input[type="file"]::file-selector-button {
     background: linear-gradient(180deg, color-mix(in oklab, var(--color-danger) 92%, white 8%), var(--color-danger));
     border: 1px solid color-mix(in oklab, var(--color-danger) 80%, var(--color-border));
 }
+
 .btn-danger:hover {
     filter: brightness(0.97);
 }
+
 .btn-danger:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-danger) 30%, transparent);
@@ -654,9 +736,11 @@ input[type="file"]::file-selector-button {
     background: linear-gradient(180deg, color-mix(in oklab, var(--color-surface) 92%, var(--color-bg)), var(--color-surface));
     border: 1px solid var(--color-border);
 }
+
 .btn-secondary:hover {
     background: linear-gradient(180deg, color-mix(in oklab, var(--color-surface) 96%, var(--color-bg)), var(--color-surface));
 }
+
 .btn-secondary:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
@@ -667,8 +751,9 @@ input[type="file"]::file-selector-button {
     border-radius: 999px;
     background: linear-gradient(180deg, color-mix(in oklab, var(--color-bg), white 8%), var(--color-bg));
 }
+
 .theme-toggle:hover {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* Summary cards: subtle lift and active ring */
@@ -676,10 +761,12 @@ input[type="file"]::file-selector-button {
     border: 1px solid var(--color-border);
     background: linear-gradient(180deg, var(--color-surface), color-mix(in oklab, var(--color-surface) 96%, var(--color-bg)));
 }
+
 .stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
+
 .stat-card.active {
     box-shadow: 0 0 0 3px color-mix(in oklab, currentColor 35%, transparent);
 }
@@ -688,12 +775,15 @@ input[type="file"]::file-selector-button {
 .timeline-item {
     border: 1px solid var(--color-border);
 }
+
 .timeline-item:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
+
 .collapse-icon {
     opacity: 0.8;
 }
+
 .expand-toggle {
     color: color-mix(in oklab, var(--color-primary) 80%, var(--color-text));
     background: color-mix(in oklab, var(--color-primary) 8%, transparent);
@@ -705,29 +795,42 @@ input[type="file"]::file-selector-button {
 .progress-bar {
     background: color-mix(in oklab, #e9ecef 80%, var(--color-bg));
 }
+
 .progress-fill.fast {
     background: linear-gradient(90deg, color-mix(in oklab, var(--color-success) 85%, white), var(--color-success));
 }
+
 .progress-fill.normal {
     background: linear-gradient(90deg, color-mix(in oklab, var(--color-primary) 85%, white), var(--color-primary));
 }
+
 .progress-fill.slow {
     background: linear-gradient(90deg, color-mix(in oklab, var(--color-warning) 85%, white), var(--color-warning));
 }
+
 .progress-fill.critical {
     background: repeating-linear-gradient(45deg,
-        color-mix(in oklab, var(--color-danger) 85%, white) 0,
-        color-mix(in oklab, var(--color-danger) 85%, white) 10px,
-        var(--color-danger) 10px,
-        var(--color-danger) 20px);
+    color-mix(in oklab, var(--color-danger) 85%, white) 0,
+    color-mix(in oklab, var(--color-danger) 85%, white) 10px,
+    var(--color-danger) 10px,
+    var(--color-danger) 20px);
     animation: stripeMove 1s linear infinite;
 }
+
 @keyframes stripeMove {
-    to { background-position: 40px 0; }
+    to {
+        background-position: 40px 0;
+    }
 }
+
 @media (prefers-reduced-motion: reduce) {
-    .progress-fill { transition: none; }
-    .progress-fill.critical { animation: none; }
+    .progress-fill {
+        transition: none;
+    }
+
+    .progress-fill.critical {
+        animation: none;
+    }
 }
 
 /* Empty/loading states as elevated cards */
@@ -743,31 +846,54 @@ input[type="file"]::file-selector-button {
 @media (prefers-color-scheme: dark) {
     .btn {
         border-color: color-mix(in oklab, var(--color-border) 70%, black);
-        background: rgba(255,255,255,0.06);
+        background: rgba(255, 255, 255, 0.06);
         color: var(--color-text);
     }
+
     .btn:hover {
-        background: rgba(255,255,255,0.10);
+        background: rgba(255, 255, 255, 0.10);
     }
+
     input[type="file"] {
-        background: rgba(255,255,255,0.04);
+        background: rgba(255, 255, 255, 0.04);
     }
-    .btn-primary { filter: saturate(1.05); }
-    .expand-toggle { background: color-mix(in oklab, var(--color-primary) 16%, transparent); }
+
+    .btn-primary {
+        filter: saturate(1.05);
+    }
+
+    .expand-toggle {
+        background: color-mix(in oklab, var(--color-primary) 16%, transparent);
+    }
 }
+
 [data-theme="dark"] .btn {
     border-color: color-mix(in oklab, var(--color-border) 70%, black);
-    background: rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.06);
     color: var(--color-text);
 }
-[data-theme="dark"] .btn:hover { background: rgba(255,255,255,0.10); }
-[data-theme="dark"] input[type="file"] { background: rgba(255,255,255,0.04); }
-[data-theme="dark"] .btn-primary { filter: saturate(1.05); }
-[data-theme="dark"] .expand-toggle { background: color-mix(in oklab, var(--color-primary) 16%, transparent); }
+
+[data-theme="dark"] .btn:hover {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+[data-theme="dark"] input[type="file"] {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .btn-primary {
+    filter: saturate(1.05);
+}
+
+[data-theme="dark"] .expand-toggle {
+    background: color-mix(in oklab, var(--color-primary) 16%, transparent);
+}
 
 
 /* Spacing above the unified editor so it doesn't crowd the toolbar */
-#pasteContainer { margin-top: 12px; }
+#pasteContainer {
+    margin-top: 12px;
+}
 
 
 /* ============================================
@@ -779,9 +905,11 @@ input[type="file"]::file-selector-button {
         background: color-mix(in oklab, var(--color-surface) 96%, black 4%);
         color: var(--color-text);
     }
+
     .input-group input[type="text"]::placeholder {
         color: #adb5bd;
     }
+
     .input-group input[type="text"]:hover,
     .input-group input[type="text"]:focus {
         background: color-mix(in oklab, var(--color-surface) 92%, black 8%);
@@ -794,6 +922,7 @@ input[type="file"]::file-selector-button {
         border-color: color-mix(in oklab, var(--color-danger) 80%, var(--color-border));
         color: #fff;
     }
+
     .btn-danger:hover {
         background: linear-gradient(180deg, color-mix(in oklab, var(--color-danger) 96%, white 4%), var(--color-danger));
     }
@@ -804,19 +933,102 @@ input[type="file"]::file-selector-button {
     background: color-mix(in oklab, var(--color-surface) 96%, black 4%);
     color: var(--color-text);
 }
+
 [data-theme="dark"] .input-group input[type="text"]::placeholder {
     color: #adb5bd;
 }
+
 [data-theme="dark"] .input-group input[type="text"]:hover,
 [data-theme="dark"] .input-group input[type="text"]:focus {
     background: color-mix(in oklab, var(--color-surface) 92%, black 8%);
     border-color: color-mix(in oklab, var(--color-primary) 55%, var(--color-border));
 }
+
 [data-theme="dark"] .btn-danger {
     background: linear-gradient(180deg, color-mix(in oklab, var(--color-danger) 92%, white 8%), var(--color-danger));
     border-color: color-mix(in oklab, var(--color-danger) 80%, var(--color-border));
     color: #fff;
 }
+
 [data-theme="dark"] .btn-danger:hover {
     background: linear-gradient(180deg, color-mix(in oklab, var(--color-danger) 96%, white 4%), var(--color-danger));
+}
+
+
+/* ============================================
+   HEADER ACTIONS & RESPONSIVE SETTINGS
+   ============================================ */
+.header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.settings-btn {
+    padding: 8px 12px;
+}
+
+.settings-label {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .settings-label {
+        display: inline;
+        margin-left: 6px;
+    }
+}
+
+
+/* ============================================
+   HEADER MENU (Hamburger dropdown)
+   ============================================ */
+.menu-wrapper {
+    position: relative;
+}
+
+.menu-toggle {
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.menu-toggle:hover {
+    background: var(--color-bg);
+}
+
+.header-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    min-width: 200px;
+    padding: 6px;
+    z-index: 101; /* above sticky header */
+}
+
+.header-menu .menu-item {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    color: var(--color-text);
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.header-menu .menu-item:hover,
+.header-menu .menu-item:focus {
+    background: var(--color-bg);
+    outline: none;
 }
